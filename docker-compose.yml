@@ -12,8 +12,8 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock
       - LAMBDA_EXECUTOR=docker
       - LAMBDA_REMOTE_DOCKER=false
-      - LAMBDA_DOCKER_NETWORK=host
-      - LAMBDA_DOCKER_FLAGS=-p 127.0.0.1:9001:9001
+      - LAMBDA_DOCKER_NETWORK=bridge
+      - LAMBDA_DOCKER_FLAGS=-p 127.0.0.1:9001:9001 --add-host=host.docker.internal:host-gateway --network=localstack-network --dns=8.8.8.8 --dns-search=.
       - PERSISTENCE=1
       - PERSISTENCE_PATH=/tmp/localstack/data
       - HOSTNAME_EXTERNAL=localhost

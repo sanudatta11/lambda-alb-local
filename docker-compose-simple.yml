@@ -6,11 +6,11 @@ services:
       - "4566:4566"
     environment:
       - SERVICES=lambda,elasticloadbalancing,iam,logs,ec2
-      - DEBUG=0
+      - DEBUG=1
       - DOCKER_HOST=unix:///var/run/docker.sock
       - LAMBDA_EXECUTOR=docker
       - LAMBDA_REMOTE_DOCKER=false
-      - LAMBDA_DOCKER_NETWORK=host
+      - LAMBDA_DOCKER_NETWORK=bridge
       - PERSISTENCE=0
       - HOSTNAME_EXTERNAL=localhost
       - AWS_DEFAULT_REGION=us-east-1
@@ -21,7 +21,10 @@ services:
       - LAMBDA_RUNTIME_EXECUTOR=docker
       - LAMBDA_FALLBACK_URL=http://host.docker.internal:4566
       - LAMBDA_DOCKER_DNS=8.8.8.8
-      - LAMBDA_DOCKER_FLAGS=-p 127.0.0.1:9001:9001 --add-host=host.docker.internal:host-gateway
+      - LAMBDA_DOCKER_FLAGS=-p 127.0.0.1:9001:9001 --add-host=host.docker.internal:host-gateway --network=localstack-network
+      - LAMBDA_DOCKER_CMD=docker
+      - LAMBDA_DOCKER_IMAGE=public.ecr.aws/lambda/provided:al2
+      - LAMBDA_DOCKER_FLAGS=-p 127.0.0.1:9001:9001 --add-host=host.docker.internal:host-gateway --network=localstack-network --dns=8.8.8.8 --dns-search=.
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     networks:

@@ -319,6 +319,27 @@ cleanup_localstack_advanced() {
     print_status "LocalStack (Advanced Mode) cleanup complete!"
 }
 
+# Function to deploy LocalStack Mac (optimized)
+deploy_localstack_mac() {
+    print_header
+    print_status "Deploying LocalStack with Mac-specific optimizations..."
+    
+    # Check prerequisites
+    check_prerequisites "localstack"
+    
+    # Use the Mac-specific startup script
+    ./scripts/start-localstack-mac.sh
+    
+    # Wait a bit more for Lambda services to be ready
+    print_status "Waiting for Lambda services to be ready..."
+    sleep 10
+    
+    # Deploy Lambda function
+    ./scripts/deploy-lambda-localstack.sh
+    
+    print_status "LocalStack Mac deployment complete!"
+}
+
 # Function to show interactive menu
 show_menu() {
     print_header
@@ -334,8 +355,9 @@ show_menu() {
     echo "6. Deploy LocalStack Advanced"
     echo "7. Test LocalStack Advanced"
     echo "8. Cleanup LocalStack Advanced"
+    echo "9. Deploy LocalStack Mac (Optimized)"
     echo ""
-    read -p "Choose an option (1-8): " choice
+    read -p "Choose an option (1-9): " choice
     
     case $choice in
         1)
@@ -362,8 +384,11 @@ show_menu() {
         8)
             cleanup_localstack_advanced
             ;;
+        9)
+            deploy_localstack_mac
+            ;;
         *)
-            print_error "Invalid option. Please choose 1-8."
+            print_error "Invalid option. Please choose 1-9."
             exit 1
             ;;
     esac
@@ -395,6 +420,9 @@ main() {
             ;;
         "cleanup-localstack-advanced")
             cleanup_localstack_advanced
+            ;;
+        "deploy-localstack-mac")
+            deploy_localstack_mac
             ;;
         "help"|"-h"|"--help")
             show_help
