@@ -12,6 +12,7 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock
       - LAMBDA_EXECUTOR=docker
       - LAMBDA_REMOTE_DOCKER=false
+      - LAMBDA_DOCKER_NETWORK=host
       - LAMBDA_DOCKER_FLAGS=-p 127.0.0.1:9001:9001
       - PERSISTENCE=1
       - PERSISTENCE_PATH=/tmp/localstack/data
@@ -22,6 +23,11 @@ services:
       - LOCALSTACK_VOLUME_DIR=/tmp/localstack
       - DISABLE_CORS_CHECKS=1
       - DISABLE_CUSTOM_CORS=1
+      - LAMBDA_RUNTIME_EXECUTOR=docker
+      - LAMBDA_FALLBACK_URL=http://host.docker.internal:4566
+      - LAMBDA_DOCKER_DNS=8.8.8.8
+      - LAMBDA_DOCKER_DNS_SEARCH=.
+      - LAMBDA_DOCKER_FLAGS=-p 127.0.0.1:9001:9001 --add-host=host.docker.internal:host-gateway
     volumes:
       - "./localstack-data:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"

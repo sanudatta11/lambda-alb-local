@@ -10,6 +10,7 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock
       - LAMBDA_EXECUTOR=docker
       - LAMBDA_REMOTE_DOCKER=false
+      - LAMBDA_DOCKER_NETWORK=host
       - PERSISTENCE=0
       - HOSTNAME_EXTERNAL=localhost
       - AWS_DEFAULT_REGION=us-east-1
@@ -17,6 +18,10 @@ services:
       - DISABLE_CUSTOM_CORS=1
       - SKIP_SSL_CERT_DOWNLOAD=1
       - EAGER_SERVICE_LOADING=1
+      - LAMBDA_RUNTIME_EXECUTOR=docker
+      - LAMBDA_FALLBACK_URL=http://host.docker.internal:4566
+      - LAMBDA_DOCKER_DNS=8.8.8.8
+      - LAMBDA_DOCKER_FLAGS=-p 127.0.0.1:9001:9001 --add-host=host.docker.internal:host-gateway
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     networks:

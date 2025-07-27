@@ -49,7 +49,9 @@ else
       --zip-file fileb://function.zip \
       --role "$ROLE_ARN" \
       --endpoint-url=http://localhost:4566 \
-      --profile localstack
+      --profile localstack \
+      --timeout 30 \
+      --memory-size 128
 fi
 
 print_status "Lambda function deployed successfully!"
