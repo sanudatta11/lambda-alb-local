@@ -1,0 +1,84 @@
+# Go specific
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+
+# Go build artifacts
+bootstrap
+function.zip
+*.zip
+
+# Go module files (keep go.mod and go.sum)
+# go.mod
+# go.sum
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# AWS specific
+.aws/
+aws-credentials
+
+# Terraform (if using for infrastructure)
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Local development
+local/
+tmp/
+temp/
+
+# Coverage reports
+coverage.txt
+coverage.html
+
+# Profiling data
+*.prof
+
+# Dependency directories (if using vendor)
+vendor/
+
+# Air live reload (if using)
+tmp/
+
+# Local configuration
+config.local.yaml
+config.local.yml
+config.local.json
+
+# Backup files
+*.bak
+*.backup 
