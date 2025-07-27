@@ -1,0 +1,27 @@
+services:
+  localstack:
+    image: localstack/localstack:3.0
+    container_name: lambda-alb-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=lambda,elasticloadbalancing,iam,logs,ec2
+      - DEBUG=0
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - LAMBDA_EXECUTOR=docker
+      - LAMBDA_REMOTE_DOCKER=false
+      - PERSISTENCE=0
+      - HOSTNAME_EXTERNAL=localhost
+      - AWS_DEFAULT_REGION=us-east-1
+      - DISABLE_CORS_CHECKS=1
+      - DISABLE_CUSTOM_CORS=1
+      - SKIP_SSL_CERT_DOWNLOAD=1
+      - EAGER_SERVICE_LOADING=1
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - localstack-network
+
+networks:
+  localstack-network:
+    driver: bridge 

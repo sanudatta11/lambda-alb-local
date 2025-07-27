@@ -45,10 +45,20 @@ func handleRequest(ctx context.Context, request events.ALBTargetGroupRequest) (e
 
 	// Handle OPTIONS request for CORS
 	if request.HTTPMethod == http.MethodOptions {
+		corsResponse := Response{
+			Message:     "CORS preflight request handled successfully",
+			RequestType: "OPTIONS",
+			Path:        request.Path,
+			Method:      request.HTTPMethod,
+			Headers:     request.Headers,
+			Status:      http.StatusOK,
+		}
+
+		corsBody, _ := json.Marshal(corsResponse)
 		return events.ALBTargetGroupResponse{
 			StatusCode: http.StatusOK,
 			Headers:    headers,
-			Body:       "",
+			Body:       string(corsBody),
 		}, nil
 	}
 
@@ -84,6 +94,10 @@ func handleRequest(ctx context.Context, request events.ALBTargetGroupRequest) (e
 
 	case http.MethodPatch:
 		response.Message = "PATCH request processed successfully"
+		response.Status = http.StatusOK
+
+	case http.MethodOptions:
+		response.Message = "OPTIONS request processed successfully"
 		response.Status = http.StatusOK
 
 	default:

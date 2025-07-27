@@ -1,0 +1,47 @@
+services:
+  localstack:
+    image: localstack/localstack:3.0
+    container_name: lambda-alb-localstack
+    ports:
+      - "4566:4566"      # LocalStack main port
+      - "4510-4559:4510-4559"  # External service port range
+    environment:
+      - SERVICES=lambda,elasticloadbalancing,iam,logs,ec2
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - LAMBDA_EXECUTOR=docker
+      - LAMBDA_REMOTE_DOCKER=false
+      - LAMBDA_DOCKER_FLAGS=-p 127.0.0.1:9001:9001
+      - PERSISTENCE=1
+      - PERSISTENCE_PATH=/tmp/localstack/data
+      - HOSTNAME_EXTERNAL=localhost
+      - AWS_DEFAULT_REGION=us-east-1
+      - TMPDIR=/tmp/localstack
+      - LOCALSTACK_HOST=0.0.0.0
+      - LOCALSTACK_VOLUME_DIR=/tmp/localstack
+      - DISABLE_CORS_CHECKS=1
+      - DISABLE_CUSTOM_CORS=1
+    volumes:
+      - "./localstack-data:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./lambda:/docker-entrypoint-initaws.d"  # Mount lambda directory for initialization
+    networks:
+      - localstack-network
+
+  # Optional: Add a simple web server to test ALB
+  test-web:
+    image: nginx:alpine
+    container_name: test-web-server
+    ports:
+      - "8080:80"
+    volumes:
+      - ./test-html:/usr/share/nginx/html
+    networks:
+      - localstack-network
+    depends_on:
+      - localstack
+
+networks:
+  localstack-network:
+    driver: bridge 

@@ -49,6 +49,8 @@ logs/
 # AWS specific
 .aws/
 aws-credentials
+awscliv2.zip
+aws/
 
 # Terraform (if using for infrastructure)
 *.tfstate
@@ -60,6 +62,7 @@ aws-credentials
 local/
 tmp/
 temp/
+localstack-data/
 
 # Coverage reports
 coverage.txt
