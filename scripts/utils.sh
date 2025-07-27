@@ -38,12 +38,13 @@ set_localstack_env() {
 # Function to wait for Lambda function to be ready
 wait_for_lambda_ready() {
     local function_name=${1:-"go-alb-lambda"}
-    local max_attempts=${2:-10}
+    local max_attempts=${2:-15}
     local attempt=1
     
     print_status "Checking if Lambda function is ready..."
     
     while [ $attempt -le $max_attempts ]; do
+        # Try to get function state
         function_state=$(aws lambda get-function \
           --function-name "$function_name" \
           --endpoint-url=http://localhost:4566 \
@@ -55,8 +56,23 @@ wait_for_lambda_ready() {
             print_status "Lambda function is ready!"
             return 0
         elif [ "$function_state" = "Failed" ]; then
-            print_error "Lambda function is in failed state!"
-            return 1
+            print_warning "Lambda function shows failed state, attempting to recover..."
+            
+            # Try to update the function to trigger a restart
+            if aws lambda update-function-code \
+              --function-name "$function_name" \
+              --zip-file fileb://function.zip \
+              --endpoint-url=http://localhost:4566 \
+              --profile localstack > /dev/null 2>&1; then
+                print_status "Function updated, waiting for restart..."
+                sleep 5
+                continue
+            else
+                print_error "Failed to recover Lambda function. This is common on Mac."
+                print_error "Try using the local development server instead:"
+                print_error "  ./start.sh deploy-simple"
+                return 1
+            fi
         fi
         
         if [ $attempt -eq $max_attempts ]; then
@@ -64,8 +80,8 @@ wait_for_lambda_ready() {
             return 0
         fi
         
-        print_status "Function not ready yet (state: $function_state), waiting 3 seconds..."
-        sleep 3
+        print_status "Function not ready yet (state: $function_state), waiting 5 seconds..."
+        sleep 5
         attempt=$((attempt + 1))
     done
 }

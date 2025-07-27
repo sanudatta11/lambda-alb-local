@@ -57,19 +57,23 @@ fi
 print_status "Lambda function deployed successfully!"
 
 # Wait for the function to be ready
-wait_for_lambda_ready "go-alb-lambda" 30
+if wait_for_lambda_ready "go-alb-lambda" 30; then
+    # Test the function
+    print_status "Testing Lambda function..."
+    aws lambda invoke \
+      --function-name go-alb-lambda \
+      --payload '{"httpMethod": "GET", "path": "/test", "headers": {}, "queryStringParameters": {}, "body": ""}' \
+      --endpoint-url=http://localhost:4566 \
+      --profile localstack \
+      response.json
 
-# Test the function
-print_status "Testing Lambda function..."
-aws lambda invoke \
-  --function-name go-alb-lambda \
-  --payload '{"httpMethod": "GET", "path": "/test", "headers": {}, "queryStringParameters": {}, "body": ""}' \
-  --endpoint-url=http://localhost:4566 \
-  --profile localstack \
-  response.json
+    print_status "Function response:"
+    format_json response.json
+    rm -f response.json
 
-print_status "Function response:"
-format_json response.json
-rm -f response.json
-
-print_status "Lambda deployment complete!" 
+    print_status "Lambda deployment complete!"
+else
+    print_warning "Lambda function deployment had issues, but function was created."
+    print_warning "You can try testing it manually or use the local development server:"
+    print_warning "  ./start.sh deploy-simple"
+fi 
