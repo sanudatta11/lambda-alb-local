@@ -254,19 +254,6 @@ When you're ready to deploy to AWS Lambda:
      --role arn:aws:iam::YOUR_ACCOUNT_ID:role/lambda-execution-role
    ```
 
-## LocalStack Simple vs Advanced Mode
-
-| Feature | LocalStack Simple | LocalStack Advanced |
-|---------|-------------------|---------------------|
-| **Setup Complexity** | Simple | Moderate |
-| **Data Persistence** | No (stateless) | Yes (volumes) |
-| **Debug Logging** | Minimal | Full debug output |
-| **Resource Usage** | Low | High |
-| **Startup Time** | Fast (~10 seconds) | Slow (~15 seconds) |
-| **Reliability** | High (no persistence issues) | Medium (persistence can cause issues) |
-| **Use Case** | Quick testing, CI/CD | Development with data persistence |
-| **Cleanup** | Simple container stop | Full cleanup with volume removal |
-
 ## LocalStack vs Local Server
 
 | Feature | Local Server | LocalStack Simple | LocalStack Advanced |
@@ -279,6 +266,10 @@ When you're ready to deploy to AWS Lambda:
 | **Resource Usage** | Low | Medium (Docker) | High (Docker + volumes) |
 | **Startup Time** | Fast | Medium | Slow |
 | **Data Persistence** | None | None | Yes |
+| **Debug Logging** | Basic | Minimal | Full debug output |
+| **Reliability** | High | High (no persistence issues) | Medium (persistence can cause issues) |
+| **Use Case** | Quick development | Quick testing, CI/CD | Development with data persistence |
+| **Cleanup** | Simple stop | Simple container stop | Full cleanup with volume removal |
 
 **Recommendation:**
 - Use **Local Server** for quick development and testing
