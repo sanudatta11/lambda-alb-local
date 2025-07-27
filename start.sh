@@ -327,7 +327,7 @@ deploy_localstack_mac() {
     # Check prerequisites
     check_prerequisites "localstack"
     
-    # Use the Mac-specific startup script
+    # Use the Mac-specific startup script (includes IAM role creation)
     ./scripts/start-localstack-mac.sh
     
     # Wait a bit more for Lambda services to be ready

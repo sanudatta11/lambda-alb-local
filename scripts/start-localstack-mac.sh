@@ -64,4 +64,19 @@ aws configure set region us-east-1 --profile localstack
 aws configure set output json --profile localstack
 
 print_status "LocalStack started successfully!"
+
+# Wait for IAM service to be ready
+print_status "Waiting for IAM service to be ready..."
+sleep 5
+
+# Create IAM role for Lambda
+print_status "Creating IAM role for Lambda..."
+if ./scripts/create-iam-role.sh; then
+    print_status "IAM role created successfully!"
+else
+    print_error "Failed to create IAM role. Retrying..."
+    sleep 3
+    ./scripts/create-iam-role.sh
+fi
+
 print_status "You can now deploy your Lambda function." 

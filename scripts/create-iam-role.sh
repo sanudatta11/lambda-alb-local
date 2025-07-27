@@ -26,13 +26,21 @@ cat > trust-policy.json << 'EOF'
 }
 EOF
 
-# Create IAM role
-echo "Creating IAM role..."
-aws iam create-role \
+# Check if role already exists
+if aws iam get-role \
   --role-name lambda-execution-role \
-  --assume-role-policy-document file://trust-policy.json \
   --endpoint-url=http://localhost:4566 \
-  --profile localstack
+  --profile localstack > /dev/null 2>&1; then
+    echo "IAM role already exists, skipping creation..."
+else
+    # Create IAM role
+    echo "Creating IAM role..."
+    aws iam create-role \
+      --role-name lambda-execution-role \
+      --assume-role-policy-document file://trust-policy.json \
+      --endpoint-url=http://localhost:4566 \
+      --profile localstack
+fi
 
 # Create policy for Lambda execution
 cat > lambda-policy.json << 'EOF'
@@ -71,6 +79,15 @@ ROLE_ARN=$(aws iam get-role \
 
 echo "IAM role created successfully!"
 echo "Role ARN: $ROLE_ARN"
+
+# Verify role is accessible
+echo "Verifying role accessibility..."
+aws iam get-role \
+  --role-name lambda-execution-role \
+  --endpoint-url=http://localhost:4566 \
+  --profile localstack > /dev/null
+
+echo "Role verification successful!"
 
 # Clean up temporary files
 rm -f trust-policy.json lambda-policy.json
