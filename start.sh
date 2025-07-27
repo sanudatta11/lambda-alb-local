@@ -334,8 +334,8 @@ deploy_localstack_mac() {
     print_status "Waiting for Lambda services to be ready..."
     sleep 10
     
-    # Deploy Lambda function
-    ./scripts/deploy-lambda-localstack.sh
+    # Deploy Lambda function with Mac-specific handling
+    ./scripts/deploy-lambda-localstack-mac.sh
     
     print_status "LocalStack Mac deployment complete!"
 }
