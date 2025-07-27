@@ -16,8 +16,9 @@ set_localstack_env
 # Check if LocalStack is running
 check_localstack_running
 
-# Build Lambda function
-build_lambda
+# Build Lambda function for Mac
+print_status "Building Lambda function for Mac..."
+./scripts/build-mac.sh
 
 # Get role ARN
 print_status "Getting IAM role ARN..."
@@ -56,7 +57,7 @@ else
     print_status "Creating new Lambda function..."
     aws lambda create-function \
       --function-name go-alb-lambda \
-      --runtime provided.al2 \
+      --runtime provided.al2023 \
       --handler bootstrap \
       --zip-file fileb://function.zip \
       --role "$ROLE_ARN" \

@@ -82,8 +82,12 @@ sleep 15
 print_status "11. Creating IAM role..."
 ./scripts/create-iam-role.sh
 
-# 12. Deploy Lambda with Mac-specific handling
-print_status "12. Deploying Lambda function..."
+# 12. Build Lambda for Mac
+print_status "12. Building Lambda function for Mac..."
+./scripts/build-mac.sh
+
+# 13. Deploy Lambda with Mac-specific handling
+print_status "13. Deploying Lambda function..."
 ./scripts/deploy-lambda-localstack-mac.sh
 
 print_status "Mac Lambda fix complete!"

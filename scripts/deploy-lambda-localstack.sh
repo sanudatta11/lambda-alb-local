@@ -44,7 +44,7 @@ else
     print_status "Creating new Lambda function..."
     aws lambda create-function \
       --function-name go-alb-lambda \
-      --runtime provided.al2 \
+      --runtime provided.al2023 \
       --handler bootstrap \
       --zip-file fileb://function.zip \
       --role "$ROLE_ARN" \
