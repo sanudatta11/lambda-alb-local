@@ -43,6 +43,20 @@ zip_size=$(stat -f%z function.zip 2>/dev/null || stat -c%s function.zip 2>/dev/n
 print_status "Bootstrap size: ${bootstrap_size} bytes"
 print_status "Function.zip size: ${zip_size} bytes"
 
+# Check if required Docker image is available
+print_status "Checking for required Docker image..."
+if ! docker image inspect localstack/provided:al2 >/dev/null 2>&1; then
+    print_warning "localstack/provided:al2 image not found locally"
+    print_status "Pulling localstack/provided:al2 image..."
+    if ! docker pull localstack/provided:al2; then
+        print_error "Failed to pull localstack/provided:al2 image"
+        print_error "You can try: docker pull localstack/provided:al2"
+        exit 1
+    fi
+else
+    print_status "localstack/provided:al2 image found locally"
+fi
+
 # Get role ARN
 print_status "Getting IAM role ARN..."
 ROLE_ARN=$(aws iam get-role \
