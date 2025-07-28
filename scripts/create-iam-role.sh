@@ -33,13 +33,13 @@ if aws iam get-role \
   --profile localstack > /dev/null 2>&1; then
     echo "IAM role already exists, skipping creation..."
 else
-    # Create IAM role
-    echo "Creating IAM role..."
-    aws iam create-role \
-      --role-name lambda-execution-role \
-      --assume-role-policy-document file://trust-policy.json \
-      --endpoint-url=http://localhost:4566 \
-      --profile localstack
+# Create IAM role
+echo "Creating IAM role..."
+aws iam create-role \
+  --role-name lambda-execution-role \
+  --assume-role-policy-document file://trust-policy.json \
+  --endpoint-url=http://localhost:4566 \
+  --profile localstack
 fi
 
 # Create policy for Lambda execution

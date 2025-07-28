@@ -71,7 +71,7 @@ wait_for_lambda_ready() {
                 print_error "Failed to recover Lambda function. This is common on Mac."
                 print_error "Try using the local development server instead:"
                 print_error "  ./start.sh deploy-simple"
-                return 1
+            return 1
             fi
         fi
         

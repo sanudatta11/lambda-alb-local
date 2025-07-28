@@ -99,6 +99,7 @@ show_help() {
     echo ""
     echo "Options:"
     echo "  deploy-simple              Deploy and start local development server"
+    echo "  test-simple                Test local development server"
     echo "  deploy-localstack-mac      Deploy to LocalStack (Mac Optimized)"
     echo "  test-localstack-simple     Test LocalStack (Simple Mode)"
     echo "  cleanup-localstack-simple  Cleanup LocalStack (Simple Mode)"
@@ -106,6 +107,7 @@ show_help() {
     echo ""
     echo "Examples:"
     echo "  $0 deploy-simple"
+    echo "  $0 test-simple"
     echo "  $0 deploy-localstack-mac"
     echo "  $0 test-localstack-simple"
     echo "  $0 cleanup-localstack-simple"
@@ -194,6 +196,46 @@ deploy_localstack_mac() {
     print_status "LocalStack Mac deployment complete!"
 }
 
+# Function to test simple (local development server)
+test_simple() {
+    print_header
+    print_status "Testing local development server..."
+    
+    # Check if server is running
+    if curl -s http://localhost:8080 > /dev/null 2>&1; then
+        print_status "Local server is running. Testing endpoints..."
+        
+        # Test different HTTP methods
+        echo ""
+        print_status "Testing GET request..."
+        curl -X GET http://localhost:8080/ | python3 -m json.tool
+        
+        echo ""
+        print_status "Testing POST request..."
+        curl -X POST http://localhost:8080/ -H "Content-Type: application/json" -d '{"test": "data"}' | python3 -m json.tool
+        
+        echo ""
+        print_status "Testing PUT request..."
+        curl -X PUT http://localhost:8080/ -H "Content-Type: application/json" -d '{"test": "data"}' | python3 -m json.tool
+        
+        echo ""
+        print_status "Testing DELETE request..."
+        curl -X DELETE http://localhost:8080/ | python3 -m json.tool
+        
+        echo ""
+        print_status "Testing PATCH request..."
+        curl -X PATCH http://localhost:8080/ -H "Content-Type: application/json" -d '{"test": "data"}' | python3 -m json.tool
+        
+        echo ""
+        print_status "Testing OPTIONS request..."
+        curl -X OPTIONS http://localhost:8080/ | python3 -m json.tool
+        
+    else
+        print_error "Local server is not running. Please start it first with option 1."
+        exit 1
+    fi
+}
+
 # Function to show interactive menu
 show_menu() {
     print_header
@@ -202,27 +244,31 @@ show_menu() {
     echo "Choose your option:"
     echo ""
     echo "1. Deploy Simple (Local Development Server)"
-    echo "2. Deploy LocalStack Mac (Simple)"
-    echo "3. Test LocalStack Simple"
-    echo "4. Cleanup LocalStack Simple"
+    echo "2. Test Simple (Local Development Server)"
+    echo "3. Deploy LocalStack Mac (Simple)"
+    echo "4. Test LocalStack Simple"
+    echo "5. Cleanup LocalStack Simple"
     echo ""
-    read -p "Choose an option (1-4): " choice
+    read -p "Choose an option (1-5): " choice
     
     case $choice in
         1)
             deploy_simple
             ;;
         2)
-            deploy_localstack_mac
+            test_simple
             ;;
         3)
-            test_localstack_simple
+            deploy_localstack_mac
             ;;
         4)
+            test_localstack_simple
+            ;;
+        5)
             cleanup_localstack_simple
             ;;
         *)
-            print_error "Invalid option. Please choose 1-4."
+            print_error "Invalid option. Please choose 1-5."
             exit 1
             ;;
     esac
@@ -233,6 +279,9 @@ main() {
     case "${1:-}" in
         "deploy-simple")
             deploy_simple
+            ;;
+        "test-simple")
+            test_simple
             ;;
         "deploy-localstack-mac")
             deploy_localstack_mac
