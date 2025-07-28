@@ -18,8 +18,7 @@ check_localstack_running
 
 # Build Lambda function for Linux (required for container execution)
 print_status "Building Lambda function for Linux (container execution)..."
-GOOS=linux GOARCH=amd64 go build -o bootstrap main.go
-zip function.zip bootstrap
+./scripts/build-lambda.sh
 
 # Get role ARN
 print_status "Getting IAM role ARN..."
@@ -58,7 +57,7 @@ else
     print_status "Creating new Lambda function..."
     aws lambda create-function \
       --function-name go-alb-lambda \
-      --runtime provided.al2023 \
+      --runtime provided.al2 \
       --handler bootstrap \
       --zip-file fileb://function.zip \
       --role "$ROLE_ARN" \
