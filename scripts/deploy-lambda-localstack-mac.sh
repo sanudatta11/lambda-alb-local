@@ -123,7 +123,7 @@ fi
 print_status "Testing Lambda function..."
 if aws lambda invoke \
   --function-name go-alb-lambda \
-  --payload '{"httpMethod": "GET", "path": "/test", "headers": {}, "queryStringParameters": {}, "body": ""}' \
+  --payload '{"httpMethod": "GET", "path": "/test", "headers": {}, "queryStringParameters": {}, "body": "", "isBase64Encoded": false}' \
   --endpoint-url=http://localhost:4566 \
   --profile localstack \
   response.json 2>/dev/null; then

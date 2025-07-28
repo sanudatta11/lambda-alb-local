@@ -20,18 +20,11 @@ services:
       - EAGER_SERVICE_LOADING=1
       - LAMBDA_FALLBACK_URL=http://host.docker.internal:4566
       # - LAMBDA_DOCKER_DNS=8.8.8.8  # Uncomment if you need a specific DNS server for the Lambda Docker container
-      - LAMBDA_DOCKER_FLAGS=-p 127.0.0.1:9001:9001 --add-host=host.docker.internal:host-gateway --network=localstack-network --dns=8.8.8.8 --dns-search=. --ulimit nofile=65536:65536 --security-opt seccomp=unconfined --platform=linux/amd64 -e HTTP_PROXY=${HTTP_PROXY} -e HTTPS_PROXY=${HTTPS_PROXY} -e NO_PROXY=${NO_PROXY} -e http_proxy=${http_proxy} -e https_proxy=${https_proxy} -e no_proxy=${no_proxy}
+      - LAMBDA_DOCKER_FLAGS=-p 127.0.0.1:9001:9001 --add-host=host.docker.internal:host-gateway --network=localstack-network --dns=8.8.8.8 --dns-search=. --ulimit nofile=65536:65536 --security-opt seccomp=unconfined --platform=linux/amd64
       - LAMBDA_DOCKER_CMD=docker
-      - LAMBDA_RUNTIME_IMAGE_MAPPING={"provided.al2":"localstack/lambda:provided.al2"}
+      - LAMBDA_RUNTIME_IMAGE_MAPPING='{"provided.al2":"localstack/lambda:provided.al2"}'
       - LAMBDA_DOCKER_USE_SOCKET=false
       - LAMBDA_INIT_USER=root
-      # Proxy settings - use host proxy
-      - HTTP_PROXY=${HTTP_PROXY}
-      - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY}
-      - http_proxy=${http_proxy}
-      - https_proxy=${https_proxy}
-      - no_proxy=${no_proxy}
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     networks:

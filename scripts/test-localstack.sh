@@ -31,7 +31,8 @@ aws lambda invoke \
     "path": "/test",
     "headers": {"Content-Type": "application/json"},
     "queryStringParameters": {"param1": "value1"},
-    "body": ""
+    "body": "",
+    "isBase64Encoded": false
   }' \
   --endpoint-url=http://localhost:4566 \
   --profile localstack \
@@ -50,7 +51,8 @@ aws lambda invoke \
     "path": "/test",
     "headers": {"Content-Type": "application/json"},
     "queryStringParameters": {},
-    "body": "{\"test\": \"data\", \"message\": \"Hello from POST\"}"
+    "body": "{\"test\": \"data\", \"message\": \"Hello from POST\"}",
+    "isBase64Encoded": false
   }' \
   --endpoint-url=http://localhost:4566 \
   --profile localstack \
@@ -69,7 +71,8 @@ aws lambda invoke \
     "path": "/test",
     "headers": {"Content-Type": "application/json"},
     "queryStringParameters": {},
-    "body": "{\"test\": \"updated\", \"message\": \"Hello from PUT\"}"
+    "body": "{\"test\": \"updated\", \"message\": \"Hello from PUT\"}",
+    "isBase64Encoded": false
   }' \
   --endpoint-url=http://localhost:4566 \
   --profile localstack \
@@ -85,10 +88,10 @@ aws lambda invoke \
   --function-name go-alb-lambda \
   --payload '{
     "httpMethod": "DELETE",
-    "path": "/test",
     "headers": {},
     "queryStringParameters": {},
-    "body": ""
+    "body": "",
+    "isBase64Encoded": false
   }' \
   --endpoint-url=http://localhost:4566 \
   --profile localstack \
@@ -107,7 +110,8 @@ aws lambda invoke \
     "path": "/test",
     "headers": {"Content-Type": "application/json"},
     "queryStringParameters": {},
-    "body": "{\"patch\": \"data\", \"message\": \"Hello from PATCH\"}"
+    "body": "{\"patch\": \"data\", \"message\": \"Hello from PATCH\"}",
+    "isBase64Encoded": false
   }' \
   --endpoint-url=http://localhost:4566 \
   --profile localstack \
@@ -126,7 +130,8 @@ aws lambda invoke \
     "path": "/test",
     "headers": {"Origin": "http://localhost:3000"},
     "queryStringParameters": {},
-    "body": ""
+    "body": "",
+    "isBase64Encoded": false
   }' \
   --endpoint-url=http://localhost:4566 \
   --profile localstack \
