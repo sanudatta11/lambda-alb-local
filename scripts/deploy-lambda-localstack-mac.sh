@@ -20,6 +20,29 @@ check_localstack_running
 print_status "Building Lambda function for Linux (container execution)..."
 ./scripts/build-lambda.sh
 
+# Verify build artifacts
+print_status "Verifying build artifacts..."
+if [ ! -f "bootstrap" ]; then
+    print_error "Bootstrap binary not found after build"
+    exit 1
+fi
+
+if [ ! -f "function.zip" ]; then
+    print_error "Function.zip not found after build"
+    exit 1
+fi
+
+# Check binary compatibility
+print_status "Checking binary compatibility..."
+file_info=$(file bootstrap 2>/dev/null || echo "Unknown")
+print_status "Binary info: $file_info"
+
+# Check file sizes
+bootstrap_size=$(stat -f%z bootstrap 2>/dev/null || stat -c%s bootstrap 2>/dev/null || echo "Unknown")
+zip_size=$(stat -f%z function.zip 2>/dev/null || stat -c%s function.zip 2>/dev/null || echo "Unknown")
+print_status "Bootstrap size: ${bootstrap_size} bytes"
+print_status "Function.zip size: ${zip_size} bytes"
+
 # Get role ARN
 print_status "Getting IAM role ARN..."
 ROLE_ARN=$(aws iam get-role \
@@ -48,14 +71,17 @@ if aws lambda get-function \
   --endpoint-url=http://localhost:4566 \
   --profile localstack > /dev/null 2>&1; then
     print_status "Updating existing Lambda function..."
-    aws lambda update-function-code \
+    if ! aws lambda update-function-code \
       --function-name go-alb-lambda \
       --zip-file fileb://function.zip \
       --endpoint-url=http://localhost:4566 \
-      --profile localstack
+      --profile localstack; then
+        print_error "Failed to update Lambda function"
+        exit 1
+    fi
 else
     print_status "Creating new Lambda function..."
-    aws lambda create-function \
+    if ! aws lambda create-function \
       --function-name go-alb-lambda \
       --runtime provided.al2 \
       --handler bootstrap \
@@ -64,65 +90,20 @@ else
       --endpoint-url=http://localhost:4566 \
       --profile localstack \
       --timeout 30 \
-      --memory-size 128
+      --memory-size 128; then
+        print_error "Failed to create Lambda function"
+        exit 1
+    fi
 fi
 
 print_status "Lambda function deployed successfully!"
 
-# Wait for the function to be ready with Mac-specific handling
-print_status "Waiting for Lambda function to be ready (Mac optimized)..."
-max_attempts=20
-attempt=1
-
-while [ $attempt -le $max_attempts ]; do
-    # Try to get function state
-    function_state=$(aws lambda get-function \
-      --function-name go-alb-lambda \
-      --endpoint-url=http://localhost:4566 \
-      --profile localstack \
-      --query 'Configuration.State' \
-      --output text 2>/dev/null || echo "Unknown")
-    
-    if [ "$function_state" = "Active" ]; then
-        print_status "Lambda function is ready!"
-        break
-    elif [ "$function_state" = "Failed" ]; then
-        print_warning "Lambda function shows failed state (attempt $attempt/$max_attempts)"
-        
-        if [ $attempt -lt 5 ]; then
-            # Try to update the function to trigger a restart
-            print_status "Attempting to recover by updating function..."
-            if aws lambda update-function-code \
-              --function-name go-alb-lambda \
-              --zip-file fileb://function.zip \
-              --endpoint-url=http://localhost:4566 \
-              --profile localstack > /dev/null 2>&1; then
-                print_status "Function updated, waiting for restart..."
-                sleep 10
-            fi
-        else
-            print_error "Lambda function failed to start after multiple attempts."
-            print_error "This is a known issue with LocalStack on Mac."
-            print_error ""
-            print_error "Recommendations:"
-            print_error "1. Try the local development server: ./start.sh deploy-simple"
-            print_error "2. Check Docker Desktop resources (increase memory to 4GB+)"
-            print_error "3. Restart Docker Desktop and try again"
-            print_error ""
-            print_warning "Continuing anyway - function may work despite the error..."
-            break
-        fi
-    fi
-    
-    if [ $attempt -eq $max_attempts ]; then
-        print_warning "Function may not be fully ready, but continuing..."
-        break
-    fi
-    
-    print_status "Function not ready yet (state: $function_state), waiting 5 seconds..."
-    sleep 5
-    attempt=$((attempt + 1))
-done
+# Wait for the function to be ready
+print_status "Waiting for Lambda function to be ready..."
+if ! wait_for_lambda_ready "go-alb-lambda" 15; then
+    print_error "Lambda function failed to start"
+    exit 1
+fi
 
 # Test the function if it's available
 print_status "Testing Lambda function..."

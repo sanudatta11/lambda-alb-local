@@ -44,35 +44,33 @@ wait_for_lambda_ready() {
     print_status "Checking if Lambda function is ready..."
     
     while [ $attempt -le $max_attempts ]; do
-        # Try to get function state
-        function_state=$(aws lambda get-function \
+        # Try to get function state and details
+        function_info=$(aws lambda get-function \
           --function-name "$function_name" \
           --endpoint-url=http://localhost:4566 \
-          --profile localstack \
-          --query 'Configuration.State' \
-          --output text 2>/dev/null || echo "Unknown")
+          --profile localstack 2>/dev/null)
         
-        if [ "$function_state" = "Active" ]; then
-            print_status "Lambda function is ready!"
-            return 0
-        elif [ "$function_state" = "Failed" ]; then
-            print_warning "Lambda function shows failed state, attempting to recover..."
+        if [ $? -eq 0 ]; then
+            function_state=$(echo "$function_info" | jq -r '.Configuration.State // "Unknown"')
             
-            # Try to update the function to trigger a restart
-            if aws lambda update-function-code \
-              --function-name "$function_name" \
-              --zip-file fileb://function.zip \
-              --endpoint-url=http://localhost:4566 \
-              --profile localstack > /dev/null 2>&1; then
-                print_status "Function updated, waiting for restart..."
-                sleep 5
-                continue
-            else
-                print_error "Failed to recover Lambda function. This is common on Mac."
-                print_error "Try using the local development server instead:"
-                print_error "  ./start.sh deploy-simple"
-            return 1
+            if [ "$function_state" = "Active" ]; then
+                print_status "Lambda function is ready!"
+                return 0
+            elif [ "$function_state" = "Failed" ]; then
+                print_error "Lambda function is in failed state"
+                
+                # Get detailed error information
+                print_error "=== Lambda Function Details ==="
+                echo "$function_info" | jq -r '.Configuration | {State, LastUpdateStatus, LastUpdateStatusReason, LastUpdateStatusReasonCode}' 2>/dev/null || echo "Could not parse function details"
+                
+                # Check for container logs if available
+                print_error "=== Container Logs (if available) ==="
+                docker logs lambda-alb-localstack 2>&1 | tail -20 || echo "Could not retrieve container logs"
+                
+                return 1
             fi
+        else
+            print_warning "Could not retrieve function state (attempt $attempt/$max_attempts)"
         fi
         
         if [ $attempt -eq $max_attempts ]; then
