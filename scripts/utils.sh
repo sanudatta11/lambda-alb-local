@@ -52,11 +52,11 @@ wait_for_lambda_ready() {
         
         if [ $? -eq 0 ]; then
             function_state=$(echo "$function_info" | jq -r '.Configuration.State // "Unknown"')
-            
-            if [ "$function_state" = "Active" ]; then
-                print_status "Lambda function is ready!"
-                return 0
-            elif [ "$function_state" = "Failed" ]; then
+        
+        if [ "$function_state" = "Active" ]; then
+            print_status "Lambda function is ready!"
+            return 0
+        elif [ "$function_state" = "Failed" ]; then
                 print_error "Lambda function is in failed state"
                 
                 # Get detailed error information
@@ -67,7 +67,7 @@ wait_for_lambda_ready() {
                 print_error "=== Container Logs (if available) ==="
                 docker logs lambda-alb-localstack 2>&1 | tail -20 || echo "Could not retrieve container logs"
                 
-                return 1
+            return 1
             fi
         else
             print_warning "Could not retrieve function state (attempt $attempt/$max_attempts)"
