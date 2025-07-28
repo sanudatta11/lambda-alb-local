@@ -1,173 +1,117 @@
-# JIRA Spike: Lambda Local Development Feasibility (Mac Only)
+# JIRA Spike: Lambda Local Development (Mac)
 
-## Epic: Local Lambda Development and Testing Infrastructure
-
-### Ticket: LAMBDA-SPIKE-001
-**Title:** Spike: Evaluate Feasibility of Local Lambda Development Environment (Mac)
+## Ticket: LAMBDA-SPIKE-001
+**Title:** Evaluate Local Lambda Development Environment on Mac
 
 **Type:** Spike  
-**Priority:** High  
 **Story Points:** 3  
-**Labels:** spike, lambda, localstack, docker, mac, feasibility
+**Labels:** spike, lambda, localstack, docker, mac
 
 ---
 
-## Description
-Investigate and prototype a local development environment for Go Lambda functions on Mac to determine if it's feasible to support both local HTTP server and LocalStack integration. Focus on Mac-specific optimizations and reliability.
+## Goal
+Investigate feasibility of running Go Lambda functions locally on Mac using:
+1. Local HTTP server (direct execution)
+2. LocalStack (containerized execution)
 
----
-
-## Spike Objective
-**Goal:** Determine if we can build a reliable local Lambda development environment on Mac that works consistently for the development team.
-
-**Success Criteria:** Working prototype that demonstrates core functionality and identifies Mac-specific technical challenges.
+Determine if we can build a reliable development environment for Mac-based teams.
 
 ---
 
 ## Acceptance Criteria
 
-### 🎯 **AC-1: Core Functionality Proof of Concept (Mac)**
-**Objective:** Prove that basic Lambda function can run locally on Mac
+### **AC-1: Local HTTP Server Implementation**
+- [ ] Go Lambda function builds for Mac architecture (Intel/ARM64)
+- [ ] HTTP server handles GET/POST requests with JSON responses
+- [ ] CORS headers and error handling implemented
+- [ ] Single command startup: `./start.sh deploy-simple`
 
-**Acceptance Criteria:**
-- [ ] **AC-1.1:** Go Lambda function builds and runs as local HTTP server on Mac
-- [ ] **AC-1.2:** Function handles basic HTTP requests (GET, POST)
-- [ ] **AC-1.3:** Returns JSON responses with request details
-- [ ] **AC-1.4:** Works on both Intel and Apple Silicon Macs
+### **AC-2: LocalStack Integration**
+- [ ] LocalStack starts successfully on Mac with Docker
+- [ ] Lambda function builds for Linux (container execution)
+- [ ] Function deploys to LocalStack without "failed state"
+- [ ] Lambda invocation returns expected JSON responses
 
-**Definition of Done:**
-- [ ] Local server starts and responds to requests on Mac
-- [ ] JSON responses are properly formatted
-- [ ] Basic error handling works
-- [ ] Can start with single command
-- [ ] Works on both Mac architectures
-
----
-
-### 🎯 **AC-2: LocalStack Integration Feasibility (Mac)**
-**Objective:** Determine if LocalStack can reliably run Lambda functions on Mac
-
-**Acceptance Criteria:**
-- [ ] **AC-2.1:** LocalStack starts successfully on Mac (Intel/Apple Silicon)
-- [ ] **AC-2.2:** Lambda function deploys to LocalStack
-- [ ] **AC-2.3:** Function can be invoked and returns responses
-- [ ] **AC-2.4:** Identifies Mac-specific Docker networking challenges
-
-**Definition of Done:**
-- [ ] LocalStack deployment works on Mac
-- [ ] Lambda function executes in container without "failed state"
-- [ ] Mac-specific technical challenges are documented
-- [ ] Feasibility assessment is clear
+### **AC-3: Mac-Specific Technical Assessment**
+- [ ] Test on Intel Mac (x86_64)
+- [ ] Test on Apple Silicon Mac (ARM64)
+- [ ] Document Mac-specific Docker networking issues
+- [ ] Identify performance characteristics and resource usage
 
 ---
 
-### 🎯 **AC-3: Mac-Specific Optimization Assessment**
-**Objective:** Evaluate Mac-specific issues and solutions
+## Technical Investigation
 
-**Acceptance Criteria:**
-- [ ] **AC-3.1:** Tests on Intel Mac
-- [ ] **AC-3.2:** Tests on Apple Silicon Mac
-- [ ] **AC-3.3:** Identifies Mac-specific Docker issues
-- [ ] **AC-3.4:** Documents Mac-specific workarounds
+### **Build System Compatibility**
+- Go cross-compilation: `GOOS=darwin` for local, `GOOS=linux` for containers
+- Binary compatibility between Mac host and Linux containers
+- Docker networking: `host.docker.internal` gateway configuration
 
-**Definition of Done:**
-- [ ] Mac-specific issues are identified
-- [ ] Solutions/workarounds are documented
-- [ ] Architecture compatibility is verified
-- [ ] Risk assessment is complete
+### **LocalStack Reliability**
+- Container startup consistency on Mac
+- Lambda function deployment success rates
+- Mac-specific Docker socket permissions and resource limits
+- Error handling and recovery mechanisms
 
----
-
-## Technical Investigation Areas
-
-### **TI-1: Mac Build System Compatibility**
-- [ ] Go cross-compilation for Mac architectures (Intel/ARM64)
-- [ ] Docker container execution on Mac
-- [ ] Binary compatibility between Mac host and Linux containers
-- [ ] Rosetta 2 compatibility if needed
-
-### **TI-2: LocalStack Reliability on Mac**
-- [ ] LocalStack startup consistency on Mac
-- [ ] Lambda function deployment success rates
-- [ ] Mac-specific Docker networking issues
-- [ ] Resource usage patterns on Mac
-
-### **TI-3: Mac Development Experience**
-- [ ] Setup complexity for Mac developers
-- [ ] Error handling and debugging on Mac
-- [ ] Performance characteristics on Mac
-- [ ] Integration with Mac development workflows
+### **Development Experience**
+- Setup complexity and prerequisites
+- Error messages and debugging capabilities
+- Performance benchmarks (startup time, memory usage)
+- Integration with existing Mac development workflows
 
 ---
 
 ## Deliverables
 
-### **D1: Working Prototype (Mac)**
-- [ ] Basic local HTTP server implementation for Mac
-- [ ] LocalStack integration proof of concept on Mac
-- [ ] Simple command-line interface for Mac
+### **D1: Working Prototype**
+- Functional local HTTP server implementation
+- LocalStack integration with Lambda deployment
+- Basic command-line interface for both approaches
 
-### **D2: Mac Technical Assessment Report**
-- [ ] Mac architecture compatibility matrix
-- [ ] Mac-specific issues and workarounds
-- [ ] Performance benchmarks on Mac
-- [ ] Resource requirements for Mac
+### **D2: Technical Assessment Report**
+- Platform compatibility matrix (Intel vs Apple Silicon)
+- Known issues and workarounds for Mac
+- Performance benchmarks and resource requirements
+- Risk assessment and technical challenges
 
-### **D3: Mac Feasibility Recommendation**
-- [ ] Go/No-Go decision with rationale
-- [ ] Mac-specific risk assessment
-- [ ] Estimated effort for Mac implementation
-- [ ] Alternative approaches for Mac
+### **D3: Feasibility Recommendation**
+- Go/No-Go decision with technical rationale
+- Estimated effort for production implementation
+- Alternative approaches if LocalStack fails
 
 ---
 
-## Definition of Done (Spike)
+## Definition of Done
 
 ### **Functional Requirements**
-- [ ] Core functionality is demonstrated on Mac
+- [ ] Both local server and LocalStack approaches work
 - [ ] Mac-specific technical challenges are identified
-- [ ] Mac compatibility is assessed
+- [ ] Performance meets development team requirements
 
 ### **Technical Requirements**
-- [ ] Prototype code is functional on Mac
-- [ ] Mac-specific technical documentation is complete
-- [ ] Assessment report is comprehensive for Mac
+- [ ] Prototype demonstrates core functionality
+- [ ] Technical documentation is complete
+- [ ] Assessment covers both Mac architectures
 
 ### **Quality Requirements**
-- [ ] Findings are evidence-based for Mac
-- [ ] Recommendations are actionable for Mac
-- [ ] Mac-specific risks are properly identified
+- [ ] Findings are evidence-based
+- [ ] Recommendations are actionable
+- [ ] Risks are properly identified
 
 ---
 
-## Time Box
-**Duration:** 3 story points (approximately 1-2 days)
-
-**Time Allocation:**
-- **Day 1:** Core functionality and LocalStack integration on Mac
-- **Day 2:** Mac-specific testing and documentation
-
----
+## Time Box: 1-2 days
 
 ## Dependencies
 - Docker Desktop for Mac
-- Go development environment on Mac
+- Go 1.21+ development environment
 - AWS CLI
-- Access to both Intel and Apple Silicon Macs (if possible)
+- Access to Intel and Apple Silicon Macs
 
 ---
 
 ## Success Metrics
-- [ ] Prototype demonstrates core functionality on Mac
-- [ ] Mac-specific technical challenges are clearly identified
-- [ ] Feasibility assessment is conclusive for Mac
-- [ ] Recommendation is actionable for Mac development
-
----
-
-## Notes
-- Focus on proving core concepts on Mac, not building production-ready solution
-- Document all Mac-specific technical challenges encountered
-- Be honest about Mac-specific limitations and risks
-- Provide clear go/no-go recommendation with Mac-specific rationale
-- Consider both Intel and Apple Silicon Mac architectures
+- [ ] Prototype demonstrates both approaches work on Mac
+- [ ] Technical challenges are clearly documented
+- [ ] Feasibility assessment is conclusive
+- [ ] Go/No-Go recommendation is actionable
