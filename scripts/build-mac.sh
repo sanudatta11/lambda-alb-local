@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Mac-specific Go Lambda Build Script (for local development server)
-
 set -e
 
 echo "Building Go Lambda function for Mac (local development server)..."
