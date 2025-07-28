@@ -1,131 +1,170 @@
-# Mac Troubleshooting Guide
+# JIRA Spike: Lambda Local Development Feasibility
 
-## Lambda Configuration Status Failed
+## Epic: Local Lambda Development and Testing Infrastructure
 
-If you're getting "Lambda configuration status failed" on Mac, try these solutions:
+### Ticket: LAMBDA-SPIKE-001
+**Title:** Spike: Evaluate Feasibility of Local Lambda Development Environment
 
-### 1. Clean Restart (Recommended)
+**Type:** Spike  
+**Priority:** High  
+**Story Points:** 3  
+**Labels:** spike, lambda, localstack, docker, mac, feasibility
 
-```bash
-# Stop all containers
-docker stop $(docker ps -aq)
+---
 
-# Remove all containers
-docker rm $(docker ps -aq)
+## Description
+Investigate and prototype a local development environment for Go Lambda functions to determine if it's feasible to support both local HTTP server and LocalStack integration across different operating systems (Mac, Linux, Windows).
 
-# Remove LocalStack data
-rm -rf ./localstack-data
+---
 
-# Restart LocalStack
-./start.sh deploy-localstack-simple
-```
+## Spike Objective
+**Goal:** Determine if we can build a reliable, cross-platform local Lambda development environment that works consistently for the development team.
 
-### 2. Check Docker Resources
+**Success Criteria:** Working prototype that demonstrates core functionality and identifies key technical challenges.
 
-Ensure Docker has enough resources allocated:
-- Open Docker Desktop
-- Go to Settings → Resources
-- Increase Memory to at least 4GB
-- Increase CPUs to at least 2
-- Restart Docker
+---
 
-### 3. Verify Docker Socket
+## Acceptance Criteria
 
-```bash
-# Check if Docker socket is accessible
-ls -la /var/run/docker.sock
+### 🎯 **AC-1: Core Functionality Proof of Concept**
+**Objective:** Prove that basic Lambda function can run locally
 
-# If permission denied, fix with:
-sudo chmod 666 /var/run/docker.sock
-```
+**Acceptance Criteria:**
+- [ ] **AC-1.1:** Go Lambda function builds and runs as local HTTP server
+- [ ] **AC-1.2:** Function handles basic HTTP requests (GET, POST)
+- [ ] **AC-1.3:** Returns JSON responses with request details
+- [ ] **AC-1.4:** Works on at least one OS (Mac/Linux/Windows)
 
-### 4. Alternative: Use Local Development Server
+**Definition of Done:**
+- [ ] Local server starts and responds to requests
+- [ ] JSON responses are properly formatted
+- [ ] Basic error handling works
+- [ ] Can start with single command
 
-If LocalStack continues to fail, use the local development server instead:
+---
 
-```bash
-./start.sh deploy-simple
-./start.sh test-simple
-```
+### 🎯 **AC-2: LocalStack Integration Feasibility**
+**Objective:** Determine if LocalStack can reliably run Lambda functions
 
-### 5. Check LocalStack Logs
+**Acceptance Criteria:**
+- [ ] **AC-2.1:** LocalStack starts successfully on target OS
+- [ ] **AC-2.2:** Lambda function deploys to LocalStack
+- [ ] **AC-2.3:** Function can be invoked and returns responses
+- [ ] **AC-2.4:** Identifies OS-specific challenges and solutions
 
-```bash
-# View LocalStack logs
-docker logs lambda-alb-localstack
+**Definition of Done:**
+- [ ] LocalStack deployment works
+- [ ] Lambda function executes in container
+- [ ] Key technical challenges are documented
+- [ ] Feasibility assessment is clear
 
-# Follow logs in real-time
-docker logs -f lambda-alb-localstack
-```
+---
 
-### 6. Manual Lambda Creation
+### 🎯 **AC-3: Cross-Platform Compatibility Assessment**
+**Objective:** Evaluate platform-specific issues and solutions
 
-If automatic deployment fails, try manual creation:
+**Acceptance Criteria:**
+- [ ] **AC-3.1:** Tests on Mac (Intel/Apple Silicon)
+- [ ] **AC-3.2:** Tests on Linux (Ubuntu)
+- [ ] **AC-3.3:** Identifies platform-specific requirements
+- [ ] **AC-3.4:** Documents workarounds for known issues
 
-```bash
-# Build the function
-./scripts/build.sh
+**Definition of Done:**
+- [ ] Platform-specific issues are identified
+- [ ] Solutions/workarounds are documented
+- [ ] Compatibility matrix is created
+- [ ] Risk assessment is complete
 
-# Create IAM role manually
-aws iam create-role \
-  --role-name lambda-execution-role \
-  --assume-role-policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"lambda.amazonaws.com"},"Action":"sts:AssumeRole"}]}' \
-  --endpoint-url=http://localhost:4566 \
-  --profile localstack
+---
 
-# Attach policy
-aws iam attach-role-policy \
-  --role-name lambda-execution-role \
-  --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole \
-  --endpoint-url=http://localhost:4566 \
-  --profile localstack
+## Technical Investigation Areas
 
-# Create Lambda function
-aws lambda create-function \
-  --function-name go-alb-lambda \
-  --runtime provided.al2 \
-  --handler bootstrap \
-  --zip-file fileb://function.zip \
-  --role arn:aws:iam::000000000000:role/lambda-execution-role \
-  --endpoint-url=http://localhost:4566 \
-  --profile localstack \
-  --timeout 30 \
-  --memory-size 128
-```
+### **TI-1: Build System Compatibility**
+- [ ] Go cross-compilation for different OS/architectures
+- [ ] Docker container execution on different platforms
+- [ ] Binary compatibility between host and container
 
-### 7. Common Mac Issues
+### **TI-2: LocalStack Reliability**
+- [ ] LocalStack startup consistency across platforms
+- [ ] Lambda function deployment success rates
+- [ ] Container networking issues and solutions
+- [ ] Resource usage patterns
 
-**Issue:** "Permission denied" on docker.sock
-**Solution:** 
-```bash
-sudo chmod 666 /var/run/docker.sock
-```
+### **TI-3: Development Experience**
+- [ ] Setup complexity for new developers
+- [ ] Error handling and debugging capabilities
+- [ ] Performance characteristics
+- [ ] Integration with existing workflows
 
-**Issue:** "No space left on device"
-**Solution:**
-```bash
-docker system prune -a
-```
+---
 
-**Issue:** "Connection refused" to LocalStack
-**Solution:**
-```bash
-# Wait longer for LocalStack to start
-sleep 30
-# Then try deployment again
-```
+## Deliverables
 
-### 8. Fallback: Use Local Server
+### **D1: Working Prototype**
+- [ ] Basic local HTTP server implementation
+- [ ] LocalStack integration proof of concept
+- [ ] Simple command-line interface
 
-If LocalStack continues to have issues on Mac, the local development server provides the same functionality for testing:
+### **D2: Technical Assessment Report**
+- [ ] Platform compatibility matrix
+- [ ] Known issues and workarounds
+- [ ] Performance benchmarks
+- [ ] Resource requirements
 
-```bash
-# Start local server
-./start.sh deploy-simple
+### **D3: Feasibility Recommendation**
+- [ ] Go/No-Go decision with rationale
+- [ ] Risk assessment
+- [ ] Estimated effort for full implementation
+- [ ] Alternative approaches considered
 
-# Test with curl
-curl -X GET http://localhost:8080/
-curl -X POST http://localhost:8080/ -H "Content-Type: application/json" -d '{"test": "data"}'
-```
+---
 
-The local server simulates the Lambda function behavior without requiring LocalStack. 
+## Definition of Done (Spike)
+
+### **Functional Requirements**
+- [ ] Core functionality is demonstrated
+- [ ] Key technical challenges are identified
+- [ ] Platform compatibility is assessed
+
+### **Technical Requirements**
+- [ ] Prototype code is functional
+- [ ] Technical documentation is complete
+- [ ] Assessment report is comprehensive
+
+### **Quality Requirements**
+- [ ] Findings are evidence-based
+- [ ] Recommendations are actionable
+- [ ] Risks are properly identified
+
+---
+
+## Time Box
+**Duration:** 3 story points (approximately 1-2 days)
+
+**Time Allocation:**
+- **Day 1:** Core functionality and LocalStack integration
+- **Day 2:** Cross-platform testing and documentation
+
+---
+
+## Dependencies
+- Docker Desktop
+- Go development environment
+- AWS CLI
+- Access to Mac and Linux environments
+
+---
+
+## Success Metrics
+- [ ] Prototype demonstrates core functionality
+- [ ] Technical challenges are clearly identified
+- [ ] Feasibility assessment is conclusive
+- [ ] Recommendation is actionable
+
+---
+
+## Notes
+- Focus on proving core concepts, not building production-ready solution
+- Document all technical challenges encountered
+- Be honest about limitations and risks
+- Provide clear go/no-go recommendation with rationale
