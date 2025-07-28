@@ -121,8 +121,8 @@ deploy_simple() {
     # Check prerequisites (needed for building)
     check_prerequisites
     
-    # Build the Lambda binary for Mac
-    print_status "Building Lambda binary for Mac..."
+    # Build the Lambda binary for Mac (local development server)
+    print_status "Building Lambda binary for Mac (local development server)..."
     ./scripts/build-mac.sh
     
     # Start the local server

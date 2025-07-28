@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Mac-specific Go Lambda Build Script
+# Mac-specific Go Lambda Build Script (for local development server)
 
 set -e
 
-echo "Building Go Lambda function for Mac..."
+echo "Building Go Lambda function for Mac (local development server)..."
 
 # Clean up previous builds
 rm -f bootstrap function.zip
@@ -45,5 +45,5 @@ echo "File sizes:"
 ls -lh bootstrap function.zip
 
 echo ""
-echo "Note: This build is optimized for Mac LocalStack compatibility."
-echo "For production AWS Lambda deployment, use: ./scripts/build.sh" 
+echo "Note: This build is for local development server on Mac."
+echo "For LocalStack deployment, the script will build for Linux automatically." 

@@ -21,7 +21,7 @@ services:
       - LAMBDA_RUNTIME_EXECUTOR=docker
       - LAMBDA_FALLBACK_URL=http://host.docker.internal:4566
       - LAMBDA_DOCKER_DNS=8.8.8.8
-      - LAMBDA_DOCKER_FLAGS=-p 127.0.0.1:9001:9001 --add-host=host.docker.internal:host-gateway --network=localstack-network --dns=8.8.8.8 --dns-search=. --ulimit nofile=65536:65536 --security-opt seccomp=unconfined
+      - LAMBDA_DOCKER_FLAGS=-p 127.0.0.1:9001:9001 --add-host=host.docker.internal:host-gateway --network=localstack-network --dns=8.8.8.8 --dns-search=. --ulimit nofile=65536:65536 --security-opt seccomp=unconfined --platform=linux/amd64
       - LAMBDA_DOCKER_CMD=docker
       - LAMBDA_DOCKER_IMAGE=public.ecr.aws/lambda/provided:al2023
       - LAMBDA_DOCKER_USE_SOCKET=false

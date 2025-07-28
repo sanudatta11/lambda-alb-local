@@ -16,9 +16,10 @@ set_localstack_env
 # Check if LocalStack is running
 check_localstack_running
 
-# Build Lambda function for Mac
-print_status "Building Lambda function for Mac..."
-./scripts/build-mac.sh
+# Build Lambda function for Linux (required for container execution)
+print_status "Building Lambda function for Linux (container execution)..."
+GOOS=linux GOARCH=amd64 go build -o bootstrap main.go
+zip function.zip bootstrap
 
 # Get role ARN
 print_status "Getting IAM role ARN..."
