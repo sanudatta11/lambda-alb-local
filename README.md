@@ -20,17 +20,15 @@ This is a boilerplate Go Lambda function that handles different HTTP request typ
 ├── go.mod                     # Go module dependencies
 ├── go.sum                     # Go module checksums
 ├── start.sh                   # Unified starter script (main entry point)
-├── docker-compose.yml         # LocalStack Docker Compose configuration (Advanced)
-├── docker-compose-simple.yml  # LocalStack Docker Compose configuration (Simple)
+├── docker-compose-simple.yml  # LocalStack Docker Compose configuration
 ├── scripts/                   # All utility scripts
 │   ├── utils.sh               # Shared utility functions
-│   ├── build.sh               # Build script for Lambda deployment
+│   ├── build-mac.sh           # Mac-specific build script
 │   ├── create-iam-role.sh     # Create IAM role for LocalStack
-│   ├── deploy-lambda-localstack.sh # Deploy Lambda to LocalStack
+│   ├── deploy-lambda-localstack-mac.sh # Deploy Lambda to LocalStack (Mac)
+│   ├── start-localstack-mac.sh # Start LocalStack with Mac optimizations
 │   ├── test-localstack.sh     # Test Lambda in LocalStack
-│   ├── create-alb-localstack-simple.sh # Create ALB in LocalStack
-│   ├── cleanup-localstack-simple.sh # Cleanup LocalStack (Simple Mode)
-│   └── install-prerequisites.sh # Prerequisites checker script
+│   └── cleanup-localstack-simple.sh # Cleanup LocalStack
 ├── .gitignore                 # Git ignore file
 └── README.md                  # This file
 ```
@@ -88,98 +86,29 @@ brew install zip
 ./start.sh
 ```
 
-This will show an interactive menu with 8 options:
+This will show an interactive menu with 4 options:
 
 1. **Deploy Simple** - Start local development server
-2. **Test Simple** - Test local development server
-3. **Deploy LocalStack Simple** - Deploy to LocalStack (Simple Mode)
-4. **Test LocalStack Simple** - Test LocalStack (Simple Mode)
-5. **Cleanup LocalStack Simple** - Cleanup LocalStack (Simple Mode)
-6. **Deploy LocalStack Advanced** - Deploy to LocalStack (Advanced Mode)
-7. **Test LocalStack Advanced** - Test LocalStack (Advanced Mode)
-8. **Cleanup LocalStack Advanced** - Cleanup LocalStack (Advanced Mode)
+2. **Deploy LocalStack Mac** - Deploy to LocalStack (Mac Optimized)
+3. **Test LocalStack Simple** - Test LocalStack
+4. **Cleanup LocalStack Simple** - Cleanup LocalStack
 
 Or you can specify directly:
 
 ```bash
 # Local development server
 ./start.sh deploy-simple
-./start.sh test-simple
 
-# LocalStack (Simple Mode) - RECOMMENDED
-./start.sh deploy-localstack-simple
+# LocalStack Mac (Optimized)
+./start.sh deploy-localstack-mac
 ./start.sh test-localstack-simple
 ./start.sh cleanup-localstack-simple
-
-# LocalStack (Advanced Mode)
-./start.sh deploy-localstack-advanced
-./start.sh test-localstack-advanced
-./start.sh cleanup-localstack-advanced
 
 # Show help
 ./start.sh help
 ```
 
-#### Option 1: Local Development Server
 
-The starter script will automatically:
-- Check prerequisites
-- Build the Lambda binary
-- Start the local server on port 8080
-- Provide testing instructions
-
-#### Option 2: Test Local Development Server
-
-Tests all HTTP methods against the running local server:
-- GET, POST, PUT, DELETE, PATCH, OPTIONS
-- Validates JSON responses
-- Checks status codes
-
-#### Option 3: Deploy LocalStack Simple
-
-The starter script will automatically:
-- Check prerequisites (Docker, AWS CLI)
-- Install AWS CLI if needed
-- Start LocalStack (Simple Mode)
-- Configure AWS CLI for LocalStack
-- Build and deploy Lambda function
-- Create IAM role
-
-#### Option 4: Test LocalStack Simple
-
-Tests the deployed Lambda function in LocalStack:
-- Direct Lambda invocation
-- All HTTP methods
-- JSON response validation
-
-#### Option 5: Cleanup LocalStack Simple
-
-Cleans up LocalStack (Simple Mode):
-- Stops containers
-- Removes data directories
-
-#### Option 6: Deploy LocalStack Advanced
-
-The starter script will automatically:
-- Check prerequisites (Docker, AWS CLI)
-- Install AWS CLI if needed
-- Start LocalStack (Advanced Mode)
-- Configure AWS CLI for LocalStack
-- Build and deploy Lambda function
-- Create IAM role
-
-#### Option 7: Test LocalStack Advanced
-
-Tests the deployed Lambda function in LocalStack:
-- Direct Lambda invocation
-- All HTTP methods
-- JSON response validation
-
-#### Option 8: Cleanup LocalStack Advanced
-
-Cleans up LocalStack (Advanced Mode):
-- Stops containers and removes volumes
-- Removes data directories
 
 ### Environment Variables
 
